@@ -25,8 +25,8 @@ function install_opencv()
     RC=0
     command -v lsb_release > /dev/null || RC=$?
     if [ $RC -ne 0 ] ; then
-        exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET update -y"
-        exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y lsb-release"
+        exec_and_search_errors "apt-get $APT_QUIET update -y"
+        exec_and_search_errors "apt-get $APT_QUIET install -y lsb-release"
     fi
     
     if [[ `lsb_release -d` =~ .*Raspbian.* ]] 
@@ -42,14 +42,14 @@ function install_opencv()
             echo ""; 
             echo "Installing OpenCV"; 
             echo "";
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET update -y"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y build-essential cmake pkg-config"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y libavcodec-dev libavformat-dev libswscale-dev libv4l-dev"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y libxvidcore-dev libx264-dev"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y libgtk2.0-dev libgtk-3-dev"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y libatlas-base-dev gfortran"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y python2.7-dev python3-dev wget python3-pip"
+            exec_and_search_errors "apt-get $APT_QUIET update -y"
+            exec_and_search_errors "apt-get $APT_QUIET install -y build-essential cmake pkg-config"
+            exec_and_search_errors "apt-get $APT_QUIET install -y libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev"
+            exec_and_search_errors "apt-get $APT_QUIET install -y libavcodec-dev libavformat-dev libswscale-dev libv4l-dev"
+            exec_and_search_errors "apt-get $APT_QUIET install -y libxvidcore-dev libx264-dev"
+            exec_and_search_errors "apt-get $APT_QUIET install -y libgtk2.0-dev libgtk-3-dev"
+            exec_and_search_errors "apt-get $APT_QUIET install -y libatlas-base-dev gfortran"
+            exec_and_search_errors "apt-get $APT_QUIET install -y python2.7-dev python3-dev wget python3-pip"
 
             cd $HOME
             VERSION="3.3.0"
@@ -89,8 +89,8 @@ function install_opencv()
                 exit 1
             fi            
 
-            $SUDO_PREFIX make install
-            $SUDO_PREFIX ldconfig
+            make install
+            ldconfig
         else
             echo "";
             echo "Skipping OpenCV installation based on user input";
@@ -102,12 +102,12 @@ function install_opencv()
         RC=0
         command -v pip3 > /dev/null || RC=$?
         if [ $RC -ne 0 ] ; then
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET update -y"
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y python3-pip"
+            exec_and_search_errors "apt-get $APT_QUIET update -y"
+            exec_and_search_errors "apt-get $APT_QUIET install -y python3-pip"
         fi
         command -v pip2 > /dev/null || RC=$?
         if [ $RC -ne 0 ] ; then
-            exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y python-pip"
+            exec_and_search_errors "apt-get $APT_QUIET install -y python-pip"
         fi
 
         PIP_QUIET=--quiet
