@@ -23,7 +23,7 @@ function check_supported_os()
     # install package lsb-release if application lsb_release isn't installed 
     RC=0
     command -v lsb_release > /dev/null || RC=$?
-    [ $RC -ne 0 ] && exec_and_search_errors "$SUDO_PREFIX apt-get $APT_QUIET install -y lsb-release"
+    [ $RC -ne 0 ] && exec_and_search_errors "apt-get $APT_QUIET install -y lsb-release"
     
     DISTRO="$(lsb_release -i 2>/dev/null | cut -f 2)"
     VERSION="$(lsb_release -r 2>/dev/null | awk '{ print $2 }' | sed 's/[.]//')"
@@ -49,7 +49,7 @@ function check_supported_os()
 # check_prerequisites - tests the prerequisites required to install
 function check_prerequisites()
 {
-    prerequisites="sudo sed udevadm tar"
+    prerequisites="sed udevadm tar"
     for i in $prerequisites; do
         RC=0
         # command is a bash builtin to run a command ($i in this case)
@@ -70,8 +70,8 @@ function create_install_logfile()
     # Print stdout and stderr to screen and in logfile
     d=$(date +%y-%m-%d-%H-%M)
     LOGFILE="setup_"$d".log"
-    ${SUDO_PREFIX} mkdir -p $DIR/setup-logs
-    ${SUDO_PREFIX} chown $(id -un):$(id -gn) $DIR/setup-logs
+    mkdir -p $DIR/setup-logs
+    chown $(id -un):$(id -gn) $DIR/setup-logs
     echo "Saving installation log file in $DIR/setup-logs/$LOGFILE"
     exec &> >(tee -a "$DIR/setup-logs/$LOGFILE")    
 }
