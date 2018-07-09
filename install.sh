@@ -156,8 +156,7 @@ function init_installer()
         SYS_INSTALL_DIR=/usr
     fi
 
-    ### make sure system has required prerequisites
-    check_prerequisites
+    ### make sure system has required prere
 
     if [ "${VERBOSE}" = "yes" ] ; then
         print_ncsdk_config
