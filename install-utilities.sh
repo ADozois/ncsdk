@@ -153,7 +153,7 @@ function find_previous_install()
         # file INSTALL_INFO_FILENAME not found in ${INSTALL_DIR}, so search for it in /opt via find
         PREV_INSTALL_INFO="unknown"
         if [ -d /opt ] ; then
-            PREV_INSTALL_INFO=`$SUDO_PREFIX find /opt -name $INSTALL_INFO_FILENAME -print 2> /dev/null`
+            PREV_INSTALL_INFO=`find /opt -name $INSTALL_INFO_FILENAME -print 2> /dev/null`
             if [ ! -f "${PREV_INSTALL_INFO}" ] ; then
                 PREV_INSTALL_INFO="unknown"
             fi
@@ -235,7 +235,7 @@ function check_and_remove_tk_file()
             printf "Removing NCSDK toolkit file..."
             echo "$PREV_NCS_BIN_PATH/$1"
         fi
-        $SUDO_PREFIX rm $RECURSIVE "$PREV_NCS_BIN_PATH/$1"
+        rm $RECURSIVE "$PREV_NCS_BIN_PATH/$1"
     fi
 }
 
@@ -244,13 +244,13 @@ function check_and_remove_tk_file()
 function check_and_remove_file()
 {
     if [ -e "$1" ]; then
-        $SUDO_PREFIX rm "$1"
+        rm "$1"
     else
         # remove symbolic links
         RC=0
         [ -L "$1" ] || RC=$?
         if [ ${RC} -eq 0 ] ; then
-            $SUDO_PREFIX rm "$1"
+            rm "$1"
         fi
     fi
 }
@@ -259,7 +259,7 @@ function check_and_remove_file()
 function check_and_remove_files()
 {
     if [ -e "$1" ]; then
-        $SUDO_PREFIX rm -r "$1"
+        rm -r "$1"
     fi
 }
 
@@ -279,9 +279,9 @@ function check_and_remove_pip_pkg()
             exit 1
         fi    
         RC=0
-        $PIP_PREFIX ${PIP} show ${pip_pkg} 1> /dev/null || RC=$?
+        ${PIP} show ${pip_pkg} 1> /dev/null || RC=$?
         if [ $RC -eq 0 ]; then
-            $PIP_PREFIX ${PIP} uninstall -y ${pip_pkg}
+            ${PIP} uninstall -y ${pip_pkg}
         fi
     done
 }
@@ -347,17 +347,17 @@ function detect_and_move_ncsdk1()
                 exit 1
             else
                 echo "Removing ${NCSDK1_ARCHIVE_DIR}"
-                ${SUDO_PREFIX} rm -rf ${NCSDK1_ARCHIVE_DIR}
+                rm -rf ${NCSDK1_ARCHIVE_DIR}
             fi
         fi
         # Create NCSDK API 1 system directories
-        ${SUDO_PREFIX} mkdir -p ${NCSDK1_ARCHIVE_DIR}/bin
-        ${SUDO_PREFIX} mkdir -p ${NCSDK1_ARCHIVE_DIR}/include
-        ${SUDO_PREFIX} mkdir -p ${NCSDK1_ARCHIVE_DIR}/lib/mvnc
-        ${SUDO_PREFIX} mkdir -p ${NCSDK1_ARCHIVE_DIR}/api
+        mkdir -p ${NCSDK1_ARCHIVE_DIR}/bin
+        mkdir -p ${NCSDK1_ARCHIVE_DIR}/include
+        mkdir -p ${NCSDK1_ARCHIVE_DIR}/lib/mvnc
+        mkdir -p ${NCSDK1_ARCHIVE_DIR}/api
 
         ## Move NCSDK 1.x Toolkit binaries
-        [ -d ${SYS_INSTALL_DIR}/bin/ncsdk ] && ${SUDO_PREFIX} mv ${SYS_INSTALL_DIR}/bin/ncsdk ${NCSDK1_ARCHIVE_DIR}/bin
+        [ -d ${SYS_INSTALL_DIR}/bin/ncsdk ] && mv ${SYS_INSTALL_DIR}/bin/ncsdk ${NCSDK1_ARCHIVE_DIR}/bin
         # remove toolkit binaries old soft links
         check_and_remove_file ${SYS_INSTALL_DIR}/bin/mvNCCheck
         check_and_remove_file ${SYS_INSTALL_DIR}/bin/mvNCCompile 
@@ -366,27 +366,27 @@ function detect_and_move_ncsdk1()
         check_and_remove_file ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCheck
         check_and_remove_file ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCompile
         check_and_remove_file ${NCSDK1_ARCHIVE_DIR}/bin/mvNCProfile
-        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCheck.py ]   && $SUDO_PREFIX ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCheck.py   ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCheck
-        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCompile.py ] && $SUDO_PREFIX ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCompile.py ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCompile
-        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCProfile.py ] && $SUDO_PREFIX ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCProfile.py ${NCSDK1_ARCHIVE_DIR}/bin/mvNCProfile
+        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCheck.py ]   && ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCheck.py   ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCheck
+        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCompile.py ] && ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCCompile.py ${NCSDK1_ARCHIVE_DIR}/bin/mvNCCompile
+        [ -f ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCProfile.py ] && ln -s ${NCSDK1_ARCHIVE_DIR}/bin/ncsdk/mvNCProfile.py ${NCSDK1_ARCHIVE_DIR}/bin/mvNCProfile
 
         ## Move NCSDK 1.x C/C++ API header file 
-        [ -f ${SYS_INSTALL_DIR}/include/mvnc.h ] && $SUDO_PREFIX mv ${SYS_INSTALL_DIR}/include/mvnc.h ${NCSDK1_ARCHIVE_DIR}/include
+        [ -f ${SYS_INSTALL_DIR}/include/mvnc.h ] &&  mv ${SYS_INSTALL_DIR}/include/mvnc.h ${NCSDK1_ARCHIVE_DIR}/include
 
         ## Move NCSDK 1.x C/C++ API lib - remove old soft links, move lib, create new soft link
         check_and_remove_file $SYS_INSTALL_DIR/lib/libmvnc.so
         check_and_remove_file $SYS_INSTALL_DIR/lib/libmvnc.so.0
-        [ -f ${SYS_INSTALL_DIR}/lib/mvnc/libmvnc.so.0 ] && $SUDO_PREFIX mv ${SYS_INSTALL_DIR}/lib/mvnc/libmvnc.so.0 ${NCSDK1_ARCHIVE_DIR}/lib
+        [ -f ${SYS_INSTALL_DIR}/lib/mvnc/libmvnc.so.0 ] && mv ${SYS_INSTALL_DIR}/lib/mvnc/libmvnc.so.0 ${NCSDK1_ARCHIVE_DIR}/lib
         check_and_remove_file ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so
-        [ -f ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so.0 ] && $SUDO_PREFIX ln -s ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so.0 ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so
+        [ -f ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so.0 ] && ln -s ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so.0 ${NCSDK1_ARCHIVE_DIR}/lib/libmvnc.so
 
         ## Move NCSDK 1.x firmware
-        [ -f ${SYS_INSTALL_DIR}/lib/mvnc/MvNCAPI.mvcmd ] && $SUDO_PREFIX mv ${SYS_INSTALL_DIR}/lib/mvnc/MvNCAPI.mvcmd ${NCSDK1_ARCHIVE_DIR}/lib/mvnc
+        [ -f ${SYS_INSTALL_DIR}/lib/mvnc/MvNCAPI.mvcmd ] && mv ${SYS_INSTALL_DIR}/lib/mvnc/MvNCAPI.mvcmd ${NCSDK1_ARCHIVE_DIR}/lib/mvnc
 
         ## Move NCSDK 1.x Python API
         NCSDK_DIR=${INSTALL_DIR}/NCSDK
         SDK_DIR=${NCSDK_DIR}/ncsdk-$(eval uname -m)
-        [ -d ${SDK_DIR}/api ] && $SUDO_PREFIX mv ${SDK_DIR}/api ${NCSDK1_ARCHIVE_DIR}/
+        [ -d ${SDK_DIR}/api ] && mv ${SDK_DIR}/api ${NCSDK1_ARCHIVE_DIR}/
 
         MOVED_NCAPI1="yes"
         echo -e "${YELLOW}Moved existing NCSDK 1.x files to ${NCSDK1_ARCHIVE_DIR} ${NC}"
@@ -463,17 +463,17 @@ function remove_previous_install()
     fi
     
     [ "${VERBOSE}" = "yes" ] && printf "Running ldconfig..."
-    $SUDO_PREFIX ldconfig
+    ldconfig
     [ "${VERBOSE}" = "yes" ] && printf "done\n"
 
     [ "${VERBOSE}" = "yes" ] && printf "Updating udev rules..."
     RC=0
-    $SUDO_PREFIX udevadm control --reload-rules || RC=$?
+    udevadm control --reload-rules || RC=$?
     if [ $RC -ne 0 ] ; then
         echo "Warning udevadm control --reload-rules return code = ${RC}"
     fi
     RC=0 
-    $SUDO_PREFIX udevadm trigger || RC=$?
+    udevadm trigger || RC=$?
     if [ $RC -ne 0 ] ; then
         echo "Warning udevadm trigger reported an error return code = ${RC}"
     fi
