@@ -842,6 +842,7 @@ function main()
 {
     echo "Movidius Neural Compute Toolkit Installation"
     ### initialization phase
+    check_supported_os
     init_installer
 
     # If previous install was from NCSDK 1.x release, move them
